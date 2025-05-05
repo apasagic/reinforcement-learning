@@ -1,11 +1,15 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+# Moving average for smoothing
+def moving_average(data, window=10):
+    return np.convolve(data, np.ones(window)/window, mode='valid')
+
 def epsilon_greedy_policy(state, model, epsilon, env):
     if np.random.rand() < epsilon:
         return env.action_space.sample()
     else:
-        Q = model.predict(state.reshape(1, -1))
+        Q = model.predict(state.reshape(1, -1),verbose=0)
         return np.argmax(Q)
 
 def print_policy_from_q(Q, env):

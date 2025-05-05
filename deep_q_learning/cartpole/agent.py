@@ -52,11 +52,26 @@ class QTableAgent:
             layers.Dense(action_space_size, activation='linear')
         ])
 
-        # Initialize the target network with the same weights as the Q-network
-        self.TargetNet.set_weights(self.QNetwork.get_weights())     
+        #current_time = time.strftime("%Y%m%d-%H%M%S")
+        self.log_dir = f"C:/Users/a.pasagic/Python Projects/Reinforcement-learning/reinforcement-learning/logs/QAgent"
+        self.tensorboard_writer = tf.summary.create_file_writer(self.log_dir)
+
+        self.tensorboard_callback = tf.keras.callbacks.TensorBoard(
+            log_dir=self.log_dir,
+            histogram_freq=1,
+            write_graph=True,
+            write_images=False,
+        )
+
+        self.QNetwork.build(input_shape=(None, state_space_size))
+        self.TargetNet.build(input_shape=(None, state_space_size))
 
         self.QNetwork.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=alpha), loss='mse')
         self.TargetNet.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=alpha), loss='mse')
+
+        self.QNetwork.load_weights("C:/Users/a.pasagic/Python Projects/Reinforcement-learning/reinforcement-learning/models/qnetwork_weights.weights.h5")
+        # Initialize the target network with the same weights as the Q-network
+        self.TargetNet.set_weights(self.QNetwork.get_weights())    
 
     def update_epsilon(self):
         self.epsilon = max(self.epsilon_end, self.epsilon * self.decay_rate)
@@ -103,15 +118,15 @@ class QTableAgent:
         #start = time.time()
 
         # Fit model on the batch
-        self.QNetwork.fit(states, target_q, epochs=1, verbose=0)
+        self.QNetwork.fit(states, target_q, epochs=1, verbose=0, callbacks=[self.tensorboard_callback])
         #print("Model fitting time: ", self.QNetwork.optimizer.iterations.numpy())
         #end = time.time()
         #print(f"Model fitting time: {end - start:.4f} seconds")
 
         # Update the target network every few steps (e.g., every 10 steps)
-        if self.count % 20 == 0:
-            self.TargetNet.set_weights(self.QNetwork.get_weights(),verbose=0)
-            #print("Target network updated")
+        if self.count % 50 == 0:
+            self.TargetNet.set_weights(self.QNetwork.get_weights())
+            print("Target network updated")
 
         return q_values
     
@@ -126,7 +141,12 @@ class QTableAgent:
             self.success_average = self.successes/10
             #success_rate.append(self.success_average)
 
-            #print(f"Episode: {self.count}, Success rate: {self.success_average:.3f}, Epsilon: {self.epsilon:.6f}")
+            with self.tensorboard_writer.as_default():
+              tf.summary.scalar("epsilon", self.epsilon, step=self.count)
+              tf.summary.scalar("success_rate", self.success_average, step=self.count)
+              self.tensorboard_writer.flush()
+
+            print(f"Episode: {self.count}, Success rate: {self.success_average:.3f}, Epsilon: {self.epsilon:.6f}")
 
             self.successes = 0 
             self.success_average = 0
