@@ -9,8 +9,24 @@ def epsilon_greedy_policy(state, model, epsilon, env):
     if np.random.rand() < epsilon:
         return env.action_space.sample()
     else:
-        Q = model.predict(state.reshape(1, -1),verbose=0)
+
+         # Ensure state has batch dimension and correct dtype
+        state = np.expand_dims(state, axis=0)         # shape becomes (1, 84, 84, 4)
+
+        #Q = model.predict(state.reshape(1, -1),verbose=0) #working with CartPole-v1
+        Q = model.predict(state,verbose=0)
         return np.argmax(Q)
+
+def save_checkpoint(buffer, epsilon, steps_done, episode_number, filename):
+    checkpoint_data = {
+        'replay_buffer': list(buffer),
+        'epsilon': epsilon,
+        'steps_done': steps_done,
+        'episode': episode_number
+    }
+    
+    with open(filename, 'wb') as f:
+        np.save(f, checkpoint_data)
 
 def print_policy_from_q(Q, env):
     action_arrows = {0: '←', 1: '↓', 2: '→', 3: '↑'}

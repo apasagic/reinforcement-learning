@@ -58,7 +58,7 @@ V = np.zeros(env.observation_space.n)  # Value function
 state_space_size = env.observation_space.n  # 16 for 4x4 map
 action_space_size = env.action_space.n      # 4 (Left, Down, Right, Up)
 
-file_path = r"..\..\models\q_table.npy"
+file_path = r"C:\Users\a.pasagic\Python Projects\Reinforcement-learning\reinforcement-learning\models\q_table.npy"
 
 Q = np.load(file_path)
 
