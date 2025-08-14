@@ -25,6 +25,16 @@ Implementation also features a possibility to store and load model checkpoints, 
 
 ---
 
+## Input format
+
+DQN agent receives a stack of 4 preprocessed frames from the Atari Breakout environment.
+
+Each frame is grayscale and resized to 84×84 pixels.
+
+The stacked state has the shape (84, 84, 4), where the last dimension is the frame stack.
+
+This format allows the agent to perceive temporal information (ball speed, paddle movement) while keeping the input compact for efficient training.
+
 ## 🏗 Project Structure
 
 ```text
@@ -38,24 +48,32 @@ Implementation also features a possibility to store and load model checkpoints, 
 └── README.md
 ```
 
-## Parameters
+## 🔧 Parameters
 
-| Parameter              | Default Value                                            | Description |
-|------------------------|----------------------------------------------------------|-------------|
-| **alpha**              | `0.0005`                                                 | Learning rate for the optimizer. |
-| **gamma**              | `0.95`                                                   | Discount factor for future rewards. |
-| **epsilon_start**      | `0.85`                                                    | Initial epsilon value for the epsilon-greedy policy. |
-| **epsilon_end**        | `0.05`                                                    | Minimum epsilon value during training. |
-| **decay_rate**         | `0.9995`                                                  | Multiplicative decay factor for epsilon per episode or step. |
-| **num_steps**          | `10000`                                                   | Maximum number of steps per episode. |
-| **num_episodes**       | `10000`                                                   | Total number of training episodes. |
-| **min_sample**         | `200`                                                     | Minimum number of experiences before training begins. |
-| **no_step_train**      | `5`                                                       | Number of steps between training updates. |
-| **no_step_update_target** | `5000`                                                 | Steps between target network updates. |
-| **batch_size**         | `32`                                                      | Minibatch size for training updates. |
-| **load_checkpoint**    | `True`                                                    | Load model weights from an existing checkpoint at startup. |
-| **load_deque**         | `True`                                                    | Load saved replay buffer from a file at startup. |
-| **capacity**           | `100000`                                                  | Maximum number of experiences stored in the replay buffer. |
-
+| Parameter                  | Default Value                                            | Description |
+|----------------------------|----------------------------------------------------------|-------------|
+| **alpha**                  | `0.0005`                                                 | Learning rate for the optimizer. |
+| **gamma**                  | `0.95`                                                   | Discount factor for future rewards. |
+| **epsilon_start**          | `0.85`                                                    | Initial epsilon value for the epsilon-greedy policy. |
+| **epsilon_end**            | `0.05`                                                    | Minimum epsilon value during training. |
+| **decay_rate**             | `0.9995`                                                  | Multiplicative decay factor for epsilon per episode or step. |
+| **num_steps**              | `10000`                                                   | Maximum number of steps per episode. |
+| **num_episodes**           | `10000`                                                   | Total number of training episodes. |
+| **min_sample**             | `200`                                                     | Minimum number of experiences before training begins. |
+| **no_step_train**          | `5`                                                       | Number of steps between training updates. |
+| **no_step_update_target**  | `5000`                                                     | Steps between target network updates. |
+| **batch_size**             | `32`                                                      | Minibatch size for training updates. |
+| **load_checkpoint**        | `True`                                                    | Load model weights from an existing checkpoint at startup. |
+| **load_deque**             | `True`                                                    | Load saved replay buffer from a file at startup. |
+| **weights_path**           | `"../../logs/QAgent/model_weights_DQN.weights.h5"`        | Path to save/load Q-network weights. |
+| **model_path**             | `"../../logs/QAgent/DQN_QNetwork.keras"`                  | Path to save/load the full Q-network model. |
+| **path_deque**             | `"../../checkpoint.pkl.gz"`                               | Path to save/load the replay buffer file. |
+| **capacity**               | `100000`                                                  | Maximum number of experiences stored in the replay buffer. |
+| **env_id**                 | `"BreakoutNoFrameskip-v4"`                                | Atari environment name (Gymnasium ALE). |
+| **render_mode**            | `"rgb_array"`                                             | Rendering mode for Gymnasium environment. |
+| **life_loss_penalty**      | `-0.5`                                                     | Reward penalty applied when a life is lost in Breakout. |
+| **frame_shape**            | `(84, 84)`                                                | Resized frame dimensions after preprocessing. |
+| **stack_size**             | `4`                                                       | Number of consecutive frames stacked to form a state. |
+| **grayscale**              | `True`                                                    | Convert observations to grayscale before processing. |
 
 
