@@ -8,7 +8,7 @@ Implementation utilizes the following structure in which two networks are used f
 
 Structure of the network is a commonly used, consisting of 3 CNN layers, followed by a fully connected layers:
 
-<img width="1400" height="391" alt="1_yfrF2jnI3zspkZELq2rw9g" src="https://github.com/user-attachments/assets/cedb41ee-1b74-4f72-a386-a9de1bd748bf" />
+<img width="700" height="200" alt="1_yfrF2jnI3zspkZELq2rw9g" src="https://github.com/user-attachments/assets/cedb41ee-1b74-4f72-a386-a9de1bd748bf" />
 
 Implementation also features a possibility to store and load model checkpoints, in case of timeout, if ran on limited resources, since an execution takes a fair ammount of time.
 
@@ -29,11 +29,12 @@ Implementation also features a possibility to store and load model checkpoints, 
 
 ```text
 .
-├── dqn_agent.py         # DQN Agent class
-├── train.py             # Training loop
-├── play.py              # Run a trained agent
-├── config_local.json    # Local paths (ignored in .gitignore)
-├── requirements.txt     # Python dependencies
+├── agent.py                   # DQN Agent class
+├── main_test.py               # Training loop
+├── replay_buffer.py           # Deque buffer class
+├── environment.py             # Game environment definition 
+├── check_buffer_content.py    # Debugging script which helps visualize and analyse the buffer content
+├── animate_env.py             # Debugging script which helps visualize the agent behaviour
 └── README.md
 ```
 
