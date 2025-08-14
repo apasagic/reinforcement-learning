@@ -38,5 +38,24 @@ Implementation also features a possibility to store and load model checkpoints, 
 └── README.md
 ```
 
+## Parameters
+
+| Parameter              | Default Value                                            | Description |
+|------------------------|----------------------------------------------------------|-------------|
+| **alpha**              | `0.0005`                                                 | Learning rate for the optimizer. |
+| **gamma**              | `0.95`                                                   | Discount factor for future rewards. |
+| **epsilon_start**      | `0.85`                                                    | Initial epsilon value for the epsilon-greedy policy. |
+| **epsilon_end**        | `0.05`                                                    | Minimum epsilon value during training. |
+| **decay_rate**         | `0.9995`                                                  | Multiplicative decay factor for epsilon per episode or step. |
+| **num_steps**          | `10000`                                                   | Maximum number of steps per episode. |
+| **num_episodes**       | `10000`                                                   | Total number of training episodes. |
+| **min_sample**         | `200`                                                     | Minimum number of experiences before training begins. |
+| **no_step_train**      | `5`                                                       | Number of steps between training updates. |
+| **no_step_update_target** | `5000`                                                 | Steps between target network updates. |
+| **batch_size**         | `32`                                                      | Minibatch size for training updates. |
+| **load_checkpoint**    | `True`                                                    | Load model weights from an existing checkpoint at startup. |
+| **load_deque**         | `True`                                                    | Load saved replay buffer from a file at startup. |
+| **capacity**           | `100000`                                                  | Maximum number of experiences stored in the replay buffer. |
+
 
 
