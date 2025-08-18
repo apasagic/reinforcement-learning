@@ -6,7 +6,7 @@ Implementation utilizes the following structure in which two networks are used f
 
 <img width="600" height="350" alt="DQNarchitecture-1" src="https://github.com/user-attachments/assets/f1315dd0-094f-4ec2-978c-30bb7fdc42ca" />
 
-Structure of the network is a commonly used, consisting of 3 CNN layers, followed by a fully connected layers:
+Structure of the network is a commonly used, consisting of 3 CNN layers, followed by a fully connected layers (neuron numbers differ from implementation):
 
 <img width="700" height="200" alt="1_yfrF2jnI3zspkZELq2rw9g" src="https://github.com/user-attachments/assets/cedb41ee-1b74-4f72-a386-a9de1bd748bf" />
 
