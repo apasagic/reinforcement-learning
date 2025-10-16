@@ -1,0 +1,7 @@
+logs/
+checkpoint.*
+*.mp4
+*.gif
+*.png
+*.jpg
+*.jpeg

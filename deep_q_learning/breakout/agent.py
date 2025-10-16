@@ -101,8 +101,12 @@ class DeepQAgent:
             layers.Dense(action_space_size, activation='linear')
         ])
 
-        self.weights_path = f"../../logs/QAgent/model_weights_DQN.weights.h5"
-        self.model_path = f"../../logs/QAgent/DQN_QNetwork.keras"
+        #self.weights_path = f"../../logs/QAgent/model_weights_DQN.weights.h5"
+        #self.model_path = f"../../logs/QAgent/DQN_QNetwork.keras"
+
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        self.weights_path = os.path.join(BASE_DIR, "..", "..", "logs", "QAgent", "model_weights_DQN.weights.h5")
+        self.model_path = os.path.join(BASE_DIR, "..", "..", "logs", "QAgent", "DQN_QNetwork.keras")
 
         # TENSOR BOARD
         #current_time = time.strftime("%Y%m%d-%H%M%S")
@@ -129,7 +133,8 @@ class DeepQAgent:
             # Save entire model
             self.QNetwork.save(self.model_path)
 
-        path_deque = f"../../checkpoint.pkl.gz"
+        #path_deque = f"../../checkpoint.pkl.gz"
+        path_deque = os.path.join(BASE_DIR, "..", "..", "checkpoint.pkl.gz")
 
         #Load deque content if Enabled
         if self.load_deque:
@@ -202,15 +207,16 @@ class DeepQAgent:
         self.ax_qavr.clear()
         self.ax_qmax.clear()
 
-        q_avr = list(self.q_buffer)
+        if(len(self.q_buffer)>10):
+            q_avr = list(self.q_buffer)
 
-        #Update the Q value buffer for monitoring and plot the updated function
-        self.q_buffer.append(np.average(self.q_values))
-        qavr_mean = np.convolve(q_avr, np.ones(10)/10, mode='valid')
-        self.ax_qavr.plot(np.arange(len(qavr_mean)),qavr_mean)
-        self.ax_qmax.bar(np.arange(4),np.bincount(np.argmax(self.q_values,axis=1),minlength=4))
-        self.fig_qval.canvas.draw()
-        self.fig_qval.canvas.flush_events()  # Plot updates, BUT program continues
+            #Update the Q value buffer for monitoring and plot the updated function
+            self.q_buffer.append(np.average(self.q_values))
+            qavr_mean = np.convolve(q_avr, np.ones(10)/10, mode='valid')
+            self.ax_qavr.plot(np.arange(len(qavr_mean)),qavr_mean)
+            self.ax_qmax.bar(np.arange(4),np.bincount(np.argmax(self.q_values,axis=1),minlength=4))
+            self.fig_qval.canvas.draw()
+            self.fig_qval.canvas.flush_events()  # Plot updates, BUT program continues
 
           #with self.tensorboard_writer.as_default():,
           #  tf.summary.scalar("epsilon", self.epsilon, step=s  elf.count)

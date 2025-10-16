@@ -1,0 +1,5 @@
+{
+  "weights_path": f"C:/Users/a.pasagic/Python Projects/Reinforcement-learning/reinforcement-learning/logs/QAgent/model_weights_DQN.weights.h5",
+  "model_path": f"/home/yourname/projects/logs",
+  "path_deque": f"C:/Users/a.pasagic/Python Projects/Reinforcement-learning/reinforcement-learning/checkpoint.pkl.gz"
+}

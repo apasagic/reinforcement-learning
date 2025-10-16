@@ -30,7 +30,6 @@ class ReplayBuffer:
 
     def __len__(self):
         return len(self.buffer)
-    
 
 # Load state
     def load_checkpoint_compressed(self,filename):

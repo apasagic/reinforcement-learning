@@ -1,6 +1,6 @@
 # DEFINE AND TEST ENVIRONMENT
 import gymnasium as gym
-import ale_py
+#import ale_py
 # if using gymnasium
 #import shimmy
 
@@ -41,15 +41,15 @@ class LifePenaltyWrapper(gym.Wrapper):
 # -------------------------------------
 # 👇 Environment builder
 # -------------------------------------
-def make_env():
+def make_env(render_mode="rgb_array"):
     env_id = "BreakoutNoFrameskip-v4"
-    env = gym.make(env_id, render_mode="rgb_array")
+    env = gym.make(env_id, render_mode=render_mode, frameskip=4)
     env = LifePenaltyWrapper(env, life_loss_penalty=-0.5)
     env = GrayscaleObservation(env)
     env = ResizeObservation(env, shape=(84, 84))
     env = FrameStackObservation(env, stack_size=4)
     return env
-
+  
 # -------------------------------------
 # 👇 Plot stacked frames
 # -------------------------------------
@@ -71,6 +71,7 @@ if __name__ == "__main__":
     obs, info = env.reset()
 
     for i in range(300):
+        
         action = env.action_space.sample()
         obs, reward, terminated, truncated, info = env.step(action)
 

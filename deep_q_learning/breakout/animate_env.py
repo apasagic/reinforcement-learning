@@ -21,7 +21,7 @@ state = env.reset()[0]
 state = np.array(state, dtype=np.float32) / 255.0
 state = np.transpose(state, (1, 2, 0))  # HWC format
 
-num_steps = 600
+num_steps = 500
 done = False
 
 for step in range(num_steps):
@@ -34,15 +34,25 @@ for step in range(num_steps):
     state_new = np.transpose(state_new, (1, 2, 0))  # HWC format
     state = state_new  # update state
 
+    Q_value = np.mean(DQN_agent.QNetwork.predict(state.reshape(1,84,84,4),verbose=0))
+
+    if "episode" in info:
+        ep_info = info["episode"]   
+        print(f"Episode {ind_episode + 1}: reward = {ep_info['r']}, length = {ep_info['l']}, epsilon = {DQN_agent.epsilon}")
+        break
+
+    #text = f"Action: {action},Reward: {ep_info['r']}"
+    text = f"QVal: {Q_value:.3f}, Action: {action}"
+
     # --- Extract grayscale frame for display ---
     frame = state[..., -1]  # Use latest frame in stack
     frame_uint8 = (frame * 255).astype(np.uint8)
     frame_bgr = cv2.cvtColor(frame_uint8, cv2.COLOR_GRAY2BGR)
 
     # --- Add action label to upper-right ---
-    text = f"Action: {action}"
+    
     font = cv2.FONT_HERSHEY_SIMPLEX
-    font_scale = 0.4
+    font_scale = 0.25
     color = (255, 255, 255)
     thickness = 1
     (text_width, text_height), _ = cv2.getTextSize(text, font, font_scale, thickness)
