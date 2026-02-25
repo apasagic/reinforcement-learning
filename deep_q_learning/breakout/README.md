@@ -1,3 +1,6 @@
+
+<img width="900" height="197" alt="Retro Game Atari Breakout Blog Thumbnail" src="https://github.com/user-attachments/assets/bf973339-dcd6-49e6-b758-f343c995452a" />
+
 # Deep Q-Learning for Atari Breakout 🎮
 
 This part of the repository contains an implementation of **Deep Q-Learning (DQN)** to play Atari's Breakout using reinforcement learning techniques.  It is generally based on the ideas presented in the seminal paper ["Playing Atari with Deep Reinforcement Learning"](https://arxiv.org/abs/1312.5602), adhering to the network structure and size, but with a few changes introduced, such as reward augumentation and a minor parameter tweeks.
