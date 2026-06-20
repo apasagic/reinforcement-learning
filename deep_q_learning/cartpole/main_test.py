@@ -1,6 +1,7 @@
 import gymnasium as gym
 import numpy as np
 import matplotlib.pyplot as plt
+from pathlib import Path
 
 import sys
 import os
@@ -33,18 +34,46 @@ gamma = 0.95
 
 # Parameters
 epsilon_start = 1.0
-epsilon_end = 0.05
-decay_rate = 0.99
+epsilon_end = 0.01
+decay_rate = 0.995
+
 num_steps = 500
 num_episodes = 500 # Number of episodes to train the agent
+record_every_episodes = 25
+gif_output_dir = Path(__file__).resolve().parent / "episode_gifs"
+load_weights_path = None
+# load_weights_path = "C:/Users/a.pasagic/Python Projects/Reinforcement-learning/reinforcement-learning/models/qnetwork_weights.weights.h5"
 
 epsilon = epsilon_start
 
 #env = gym.make("FrozenLake-v1", desc=None, map_name="4x4", is_slippery=False, render_mode="human");
-env = gym.make("CartPole-v1")  # CartPole-v1: 4 (position, velocity, angle, angular velocity)
+env = gym.make("CartPole-v1", render_mode="rgb_array")  # CartPole-v1: 4 (position, velocity, angle, angular velocity)
 env = gym.wrappers.RecordEpisodeStatistics(env)
 env.reset()
 #env.render()
+
+def save_episode_gif(frames, episode_number, reward):
+  if not frames:
+    return
+
+  gif_output_dir.mkdir(exist_ok=True)
+  gif_path = gif_output_dir / f"episode_{episode_number:04d}_reward_{float(reward):.0f}.gif"
+
+  try:
+    import imageio.v2 as imageio
+    imageio.mimsave(gif_path, frames, fps=30)
+  except ImportError:
+    from PIL import Image
+    pil_frames = [Image.fromarray(frame) for frame in frames]
+    pil_frames[0].save(
+      gif_path,
+      save_all=True,
+      append_images=pil_frames[1:],
+      duration=33,
+      loop=0
+    )
+
+  print(f"Recorded episode GIF saved to {gif_path}")
 
 ind_step = 0;
 ind_episode = 0;
@@ -73,13 +102,20 @@ q_table_agent = QTableAgent(
     eps_start=epsilon_start,
     eps_end=epsilon_end,
     decay_rate=decay_rate,
-    batch_size=batch_size
+    batch_size=batch_size,
+    load_weights_path=load_weights_path
 )
 
 for ind_episode in range(num_episodes):
   
   state = env.reset()[0]
   done = False
+  episode_number = ind_episode + 1
+  should_record_episode = episode_number % record_every_episodes == 0
+  recorded_frames = []
+
+  if should_record_episode:
+    recorded_frames.append(env.render())
  
   #print("Episode number: ", ind_episode)
   #print("Episode number: ", ind_episode, "Epsilon: ", q_table_agent.epsilon)
@@ -89,6 +125,9 @@ for ind_episode in range(num_episodes):
     action = q_table_agent.get_action(state, env)  # Choose action with epsilon-greedy policy
 
     state_new, reward, done, truncated, info = env.step(action)
+
+    if should_record_episode:
+      recorded_frames.append(env.render())
     
     # Extract useful info from next state
     #cart_pos = state_new[0]       # Cart position
@@ -129,6 +168,10 @@ for ind_episode in range(num_episodes):
       break
       
   q_table_agent.update_epsilon()  # Update epsilon after each episode	
+
+  if should_record_episode:
+    episode_reward = episode_rewards[-1] if episode_rewards else 0
+    save_episode_gif(recorded_frames, episode_number, episode_reward)
 
 
 # Plot total reward

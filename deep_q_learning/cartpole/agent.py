@@ -19,7 +19,18 @@ from utils import epsilon_greedy_policy  # Only if you're using it in the class
 from replay_buffer import ReplayBuffer
 
 class QTableAgent:
-    def __init__(self, state_space_size, action_space_size, alpha, gamma, eps_start, eps_end, decay_rate, batch_size):
+    def __init__(
+        self,
+        state_space_size,
+        action_space_size,
+        alpha,
+        gamma,
+        eps_start,
+        eps_end,
+        decay_rate,
+        batch_size,
+        load_weights_path=None,
+    ):
         
         self.state_space_size = state_space_size
         self.action_space_size = action_space_size
@@ -69,7 +80,10 @@ class QTableAgent:
         self.QNetwork.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=alpha), loss='mse')
         self.TargetNet.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=alpha), loss='mse')
 
-        self.QNetwork.load_weights("C:/Users/a.pasagic/Python Projects/Reinforcement-learning/reinforcement-learning/models/qnetwork_weights.weights.h5")
+        if load_weights_path:
+            self.QNetwork.load_weights(load_weights_path)
+            print(f"Loaded Q-network weights from {load_weights_path}")
+
         # Initialize the target network with the same weights as the Q-network
         self.TargetNet.set_weights(self.QNetwork.get_weights())    
 
