@@ -17,6 +17,7 @@ from tensorflow.keras import layers
 from utils import epsilon_greedy_policy
 from utils import moving_average
 from agent import QTableAgent
+from reward_shaping import CartPoleRewardShaping
 from replay_buffer import ReplayBuffer
 
 import time
@@ -43,11 +44,22 @@ record_every_episodes = 25
 gif_output_dir = Path(__file__).resolve().parent / "episode_gifs"
 load_weights_path = None
 # load_weights_path = "C:/Users/a.pasagic/Python Projects/Reinforcement-learning/reinforcement-learning/models/qnetwork_weights.weights.h5"
+use_reward_shaping = True
+reward_shaping_center_weight = 0.05
+reward_shaping_angle_weight = 0.05
 
 epsilon = epsilon_start
 
 #env = gym.make("FrozenLake-v1", desc=None, map_name="4x4", is_slippery=False, render_mode="human");
 env = gym.make("CartPole-v1", render_mode="rgb_array")  # CartPole-v1: 4 (position, velocity, angle, angular velocity)
+
+if use_reward_shaping:
+  env = CartPoleRewardShaping(
+    env,
+    center_weight=reward_shaping_center_weight,
+    angle_weight=reward_shaping_angle_weight
+  )
+
 env = gym.wrappers.RecordEpisodeStatistics(env)
 env.reset()
 #env.render()
