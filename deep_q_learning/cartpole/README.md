@@ -102,14 +102,35 @@ The initial weights are intentionally conservative:
 
 ```python
 use_reward_shaping = True
-reward_shaping_center_weight = 0.05
-reward_shaping_angle_weight = 0.05
+reward_shaping_center_weight = 0.03
+reward_shaping_angle_weight = 0.015
+reward_shaping_ramp_start_episode = 300
+reward_shaping_ramp_end_episode = 1200
 ```
 
-This keeps the original survival objective dominant while nudging the agent toward a more
-centered and upright policy. The wrapper also records `raw_reward`, `center_penalty`,
-`angle_penalty`, and `shaped_reward` in `info` so future experiments can compare raw and
-shaped reward separately.
+The shaping is scheduled as a curriculum. Early episodes use the original CartPole reward,
+which lets the agent first learn the basic survival behavior. The center and angle penalties
+then ramp in gradually, so the policy is nudged toward a more centered and upright behavior
+after it has already learned to keep the pole balanced.
+
+The wrapper records `raw_reward`, `center_penalty`, `angle_penalty`, `shaped_reward`,
+`reward_shaping_scale`, and the active shaping weights in `info` so future experiments can
+compare raw and shaped reward separately.
+
+## Reward Shaping Results
+
+After adding the scheduled center and angle penalties, later episodes show noticeably better
+position maintenance. The policy still uses small, frequent corrections, but it no longer
+leans as strongly into a one-direction drift in these examples.
+
+![Episode 1975 maintaining position after reward shaping](episode_gifs/episode_1975_reward_498.gif)
+
+![Episode 2050 maintaining position after reward shaping](episode_gifs/episode_2050_reward_490.gif)
+
+The control is still jittery. That could be improved with additional reward shaping, for
+example by softly penalizing large cart velocity, pole angular velocity, or rapid action
+switching. Those terms should be introduced carefully because too much smoothness pressure can
+make the agent slower to recover when the pole genuinely needs a sharp correction.
 
 ## Notes For Further Experiments
 
@@ -119,6 +140,8 @@ shaped reward separately.
 - Tune `center_weight` first if lateral drift remains visible.
 - Tune `angle_weight` carefully; too much angle penalty can make the agent optimize posture
   over long-term survival.
+- Consider small smoothness penalties if jitter remains visible after position drift is under
+  control.
 - Consider an episode-level learning-rate scheduler later. In Keras, a manual scheduler based
   on moving-average episode reward may fit this replay-loop setup better than a batch-level
   `ReduceLROnPlateau` callback.

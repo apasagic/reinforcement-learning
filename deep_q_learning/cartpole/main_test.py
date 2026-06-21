@@ -35,18 +35,23 @@ gamma = 0.95
 
 # Parameters
 epsilon_start = 1.0
-epsilon_end = 0.01
-decay_rate = 0.995
+# Keep exploration active while reward shaping is being learned:
+# epsilon ~= 0.33 at episode 800, 0.28 at episode 900,
+# 0.12 at episode 1500, and 0.06 at episode 2000.
+epsilon_end = 0.03
+decay_rate = 0.9986
 
 num_steps = 500
-num_episodes = 500 # Number of episodes to train the agent
+num_episodes = 2500 # Number of episodes to train the agent
 record_every_episodes = 25
 gif_output_dir = Path(__file__).resolve().parent / "episode_gifs"
 load_weights_path = None
 # load_weights_path = "C:/Users/a.pasagic/Python Projects/Reinforcement-learning/reinforcement-learning/models/qnetwork_weights.weights.h5"
 use_reward_shaping = True
-reward_shaping_center_weight = 0.05
-reward_shaping_angle_weight = 0.05
+reward_shaping_center_weight = 0.03
+reward_shaping_angle_weight = 0.015
+reward_shaping_ramp_start_episode = 300
+reward_shaping_ramp_end_episode = 1200
 
 epsilon = epsilon_start
 
@@ -57,11 +62,12 @@ if use_reward_shaping:
   env = CartPoleRewardShaping(
     env,
     center_weight=reward_shaping_center_weight,
-    angle_weight=reward_shaping_angle_weight
+    angle_weight=reward_shaping_angle_weight,
+    ramp_start_episode=reward_shaping_ramp_start_episode,
+    ramp_end_episode=reward_shaping_ramp_end_episode
   )
 
 env = gym.wrappers.RecordEpisodeStatistics(env)
-env.reset()
 #env.render()
 
 def save_episode_gif(frames, episode_number, reward):
